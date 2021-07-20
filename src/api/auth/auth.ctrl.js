@@ -43,7 +43,6 @@ export const register = async (ctx) => {
 export const login = async (ctx) => {
   // 로그인
   const { email, password } = ctx.request.body;
-  console.log(email, password);
   if (!email || !password) {
     ctx.status = 401;
     return;
@@ -76,6 +75,13 @@ export const login = async (ctx) => {
 
 export const check = async (ctx) => {
   // 로그인 상태 확인
+  const { user } = ctx.state;
+  if (!user) {
+    ctx.status = 401;
+    return;
+  }
+
+  ctx.body = user;
 };
 
 export const logout = async (ctx) => {
