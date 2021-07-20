@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/users';
 
-const jwtMiddleware = (ctx, next) => {
+const jwtMiddleware = async (ctx, next) => {
   const token = ctx.cookies.get('access_token');
   if (!token) {
     return next();
