@@ -7,7 +7,7 @@ const jwtMiddleware = (ctx, next) => {
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    ctx.status = {
+    ctx.status.user = {
       _id: decoded._id,
       email: decoded.email,
       username: decoded.username,
