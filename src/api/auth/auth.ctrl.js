@@ -29,6 +29,12 @@ export const register = async (ctx) => {
     await user.save();
 
     ctx.body = user.serialize();
+
+    const token = user.generateToken();
+    ctx.cookies.set('access_token', token, {
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+      httpOnly: true,
+    });
   } catch (e) {
     ctx.throw(500, e);
   }
@@ -36,6 +42,36 @@ export const register = async (ctx) => {
 
 export const login = async (ctx) => {
   // 로그인
+  const { email, password } = ctx.request.body;
+  console.log(email, password);
+  if (!email || !password) {
+    ctx.status = 401;
+    return;
+  }
+
+  try {
+    const user = await User.findByEmail(email);
+    if (!user) {
+      ctx.status = 401;
+      return;
+    }
+
+    const valid = await user.checkPassword(password);
+    if (!valid) {
+      ctx.status = 401;
+      return;
+    }
+
+    ctx.body = user.serialize();
+
+    const token = user.generateToken();
+    ctx.cookies.set('access_token', token, {
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+      httpOnly: true,
+    });
+  } catch (e) {
+    ctx.throw(500, e);
+  }
 };
 
 export const check = async (ctx) => {
