@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import User from '../../models/users';
 
-const USERNAMES = ['양채훈', '방세현', '안영민', '성준혁', '오예손', '최국주'];
+const USERNAMES = ['양채훈', '방세현', '안영민', '성준혁', '오예손', '최국주', 'test'];
 
 export const register = async (ctx) => {
   // 회원가입

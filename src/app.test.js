@@ -19,7 +19,7 @@ afterAll(() => {
 
 describe('회원가입 POST /api/auth/register', () => {
   test('회원가입 성공', async () => {
-    const name = Math.random().toString(36).substr(2, 11);
+    const name = 'test';
     const response = await request(server)
       .post('/api/auth/register')
       .send({ email: `${name}@test.com`, username: name, password: '123456' });
