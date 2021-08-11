@@ -1,6 +1,8 @@
 import Joi from 'joi';
 import User from '../../models/users';
 
+const USERNAMES = ['양채훈', '방세현', '안영민', '성준혁', '오예손', '최국주', 'test'];
+
 export const register = async (ctx) => {
   // 회원가입
   const schema = Joi.object().keys({
@@ -21,6 +23,12 @@ export const register = async (ctx) => {
     const exists = await User.findByEmail(email);
     if (exists) {
       ctx.status = 409;
+      return;
+    }
+
+    // 이름 검증 후 만약 위의 이름에 포함되지 않을 경우 회원가입 거부
+    if (USERNAMES.indexOf(username) === -1) {
+      ctx.status = 403;
       return;
     }
 
