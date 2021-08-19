@@ -98,3 +98,41 @@ describe('로그아웃 POST /api/auth/logout', () => {
     expect(response.status).toBe(204);
   });
 });
+
+describe('글 작성 [GET/POST/DELETE/PATCH] /api/posts', () => {
+  test('로그인 하지 않고 글 작성', async () => {
+    const response = await request(server).post('/api/posts').send({ title: '제목', body: '내용' });
+    expect(response.status).toBe(401);
+  });
+
+  test('로그인 하지 않고 글 조회', async () => {
+    const response = await request(server).get('/api/posts');
+    expect(response.status).toBe(401);
+  });
+
+  test('글 작성 및 수정', async () => {
+    const loginResponse = await request(server).post('/api/auth/login').send({ email: EMAIL, password: PASSWORD });
+    const cookie = loginResponse.headers['set-cookie'];
+
+    // 글 작성
+    const response = await request(server)
+      .post('/api/posts')
+      .set('Cookie', cookie)
+      .send({ title: '제목', body: '내용' });
+    const id = response.body._id;
+    expect(response.body.title).toBe('제목');
+    expect(response.body.body).toBe('내용');
+    expect(response.body.user.username).toBe(USERNAME);
+
+    // 수정
+    const patchResponse = await request(server)
+      .patch(`/api/posts/${id}`)
+      .set('Cookie', cookie)
+      .send({ title: '제목 수정' });
+    expect(patchResponse.body.title).toBe('제목 수정');
+    expect(patchResponse.body.body).toBe('내용');
+    expect(patchResponse.body.user.username).toBe(USERNAME);
+
+    await request(server).delete(`/api/posts/${id}`).set('Cookie', cookie);
+  });
+});
