@@ -1,4 +1,17 @@
+import mongoose from 'mongoose';
+import Joi from 'joi';
 import Post from '../../models/post';
+
+const { ObjectId } = mongoose.Types;
+
+export const checkObjectId = (ctx, next) => {
+  const { id } = ctx.params;
+  if (!ObjectId.isValid(id)) {
+    ctx.status = 400;
+    return;
+  }
+  return next();
+};
 
 /**
  * 포스트 작성
@@ -6,6 +19,18 @@ import Post from '../../models/post';
  * @param {title, body}: {string, string} 형태가 request.body 에 존재해야 함.
  */
 export const write = async (ctx) => {
+  const schema = Joi.object().keys({
+    title: Joi.string().required(),
+    body: Joi.string().required(),
+  });
+
+  const result = schema.validate(ctx.request.body);
+  if (result.error) {
+    ctx.status = 400;
+    ctx.body = result.error;
+    return;
+  }
+
   const { title, body } = ctx.request.body;
   const post = new Post({ title, body });
 
@@ -99,6 +124,18 @@ export const remove = async (ctx) => {
  */
 export const update = async (ctx) => {
   const { id } = ctx.params;
+
+  const schema = Joi.object().keys({
+    title: Joi.string(),
+    body: Joi.string(),
+  });
+
+  const result = schema.validate(ctx.request.body);
+  if (result.error) {
+    ctx.status = 400;
+    ctx.body = result.error;
+    return;
+  }
 
   try {
     const post = await Post.findByIdAndUpdate(id, ctx.request.body, {
