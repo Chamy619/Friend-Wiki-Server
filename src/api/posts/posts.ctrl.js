@@ -22,6 +22,7 @@ export const write = async (ctx) => {
   const schema = Joi.object().keys({
     title: Joi.string().required(),
     body: Joi.string().required(),
+    owner: Joi.string().required(),
   });
 
   const result = schema.validate(ctx.request.body);
@@ -31,11 +32,12 @@ export const write = async (ctx) => {
     return;
   }
 
-  const { title, body } = ctx.request.body;
+  const { title, body, owner } = ctx.request.body;
   const post = new Post({
     title,
     body,
     user: ctx.state.user,
+    owner,
   });
 
   try {

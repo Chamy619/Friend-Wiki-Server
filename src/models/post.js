@@ -11,6 +11,7 @@ const PostSchema = new Schema({
     _id: mongoose.Types.ObjectId,
     username: String,
   },
+  owner: String,
 });
 
 const Post = mongoose.model('Post', PostSchema);
