@@ -136,3 +136,18 @@ describe('글 작성 [GET/POST/DELETE/PATCH] /api/posts', () => {
     await request(server).delete(`/api/posts/${id}`).set('Cookie', cookie);
   });
 });
+
+describe('회원 및 글 리스트 받기 GET /api/list', () => {
+  test('로그인 하지 않고 리스트 요청', async () => {
+    const response = await request(server).get('/api/list').send();
+    expect(response.status).toBe(401);
+  });
+
+  test('리스트 요청', async () => {
+    const loginResponse = await request(server).post('/api/auth/login').send({ email: EMAIL, password: PASSWORD });
+    const cookie = loginResponse.headers['set-cookie'];
+
+    const response = await request(server).get('/api/list').set('Cookie', cookie).send();
+    expect(response.body.list['테스터'][0].title).toBe('제목');
+  });
+});
