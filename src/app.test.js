@@ -19,7 +19,7 @@ afterAll(() => {
 
 describe('회원가입 POST /api/auth/register', () => {
   test('회원가입 성공', async () => {
-    const name = 'test';
+    const name = '테스팅';
     const response = await request(server)
       .post('/api/auth/register')
       .send({ email: `${name}@test.com`, username: name, password: '123456' });
@@ -101,7 +101,7 @@ describe('로그아웃 POST /api/auth/logout', () => {
 
 describe('글 작성 [GET/POST/DELETE/PATCH] /api/posts', () => {
   test('로그인 하지 않고 글 작성', async () => {
-    const response = await request(server).post('/api/posts').send({ title: '제목', body: '내용' });
+    const response = await request(server).post('/api/posts').send({ title: '제목', body: '내용', owner: '테스터' });
     expect(response.status).toBe(401);
   });
 
@@ -118,7 +118,7 @@ describe('글 작성 [GET/POST/DELETE/PATCH] /api/posts', () => {
     const response = await request(server)
       .post('/api/posts')
       .set('Cookie', cookie)
-      .send({ title: '제목', body: '내용' });
+      .send({ title: '제목', body: '내용', owner: '테스터' });
     const id = response.body._id;
     expect(response.body.title).toBe('제목');
     expect(response.body.body).toBe('내용');
@@ -148,6 +148,6 @@ describe('회원 및 글 리스트 받기 GET /api/list', () => {
     const cookie = loginResponse.headers['set-cookie'];
 
     const response = await request(server).get('/api/list').set('Cookie', cookie).send();
-    expect(response.body.list['테스터'][0].title).toBe('제목');
+    expect(response.body['테스터'][0].title).toBe('제목');
   });
 });
