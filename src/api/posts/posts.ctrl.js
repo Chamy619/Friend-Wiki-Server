@@ -143,8 +143,14 @@ export const update = async (ctx) => {
     return;
   }
 
+  const updatePost = {
+    ...ctx.request.body,
+    user: ctx.state.user,
+    publishedDate: Date.now(),
+  };
+
   try {
-    const post = await Post.findByIdAndUpdate(id, ctx.request.body, {
+    const post = await Post.findByIdAndUpdate(id, updatePost, {
       new: true,
     }).exec();
     ctx.body = post;
