@@ -26,6 +26,12 @@ export const register = async (ctx) => {
       return;
     }
 
+    const existsUsername = await User.findByUsername(username);
+    if (existsUsername) {
+      ctx.status = 409;
+      return;
+    }
+
     // 이름 검증 후 만약 위의 이름에 포함되지 않을 경우 회원가입 거부
     if (USERNAMES.indexOf(username) === -1) {
       ctx.status = 403;
