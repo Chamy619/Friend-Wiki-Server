@@ -36,7 +36,7 @@ describe('회원가입 POST /api/auth/register', () => {
   test('회원가입 이메일 중복', async () => {
     const response = await request(server)
       .post('/api/auth/register')
-      .send({ username: USERNAME, email: EMAIL, password: PASSWORD });
+      .send({ username: '유닠네임', email: EMAIL, password: PASSWORD });
     expect(response.status).toBe(409);
   });
 
