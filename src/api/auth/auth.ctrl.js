@@ -20,17 +20,17 @@ export const register = async (ctx) => {
 
   const { email, username, password } = ctx.request.body;
   try {
-    const exists = await User.findByEmail(email);
+    const exists = (await User.findByEmail(email)) || (await User.findByUsername(username));
     if (exists) {
       ctx.status = 409;
       return;
     }
 
-    const existsUsername = await User.findByUsername(username);
-    if (existsUsername) {
-      ctx.status = 409;
-      return;
-    }
+    // const existsUsername = await User.findByUsername(username);
+    // if (existsUsername) {
+    //   ctx.status = 409;
+    //   return;
+    // }
 
     // 이름 검증 후 만약 위의 이름에 포함되지 않을 경우 회원가입 거부
     if (USERNAMES.indexOf(username) === -1) {
