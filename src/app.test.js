@@ -158,3 +158,14 @@ describe('회원 및 글 리스트 받기 GET /api/list', () => {
     expect(response.body['테스터'][0].title).toBe('제목');
   });
 });
+
+describe('관리자 페이지 로그인 POST /api/admin/login', () => {
+  test('관리자 페이지 로그인 성공', async () => {
+    const response = await request(server)
+      .post('/api/admin/login')
+      .send({ username: 'sysadmin', password: 'sysadmin' });
+
+    expect(response.status).toBe(200);
+    expect(response.body.username).toBe('sysadmin');
+  });
+});
