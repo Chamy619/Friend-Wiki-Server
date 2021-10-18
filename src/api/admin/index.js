@@ -1,5 +1,5 @@
 import Router from 'koa-router';
-import * as adminCtrl from './adminCtrl';
+import * as adminCtrl from './admin.ctrl';
 
 const admin = new Router();
 
