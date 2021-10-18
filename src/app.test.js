@@ -158,3 +158,50 @@ describe('회원 및 글 리스트 받기 GET /api/list', () => {
     expect(response.body['테스터'][0].title).toBe('제목');
   });
 });
+
+describe('관리자 페이지 로그인 POST /api/admin/login', () => {
+  test('관리자 페이지 로그인 성공', async () => {
+    const response = await request(server)
+      .post('/api/admin/login')
+      .send({ username: 'sysadmin', password: 'sysadmin' });
+
+    expect(response.status).toBe(200);
+    expect(response.body.username).toBe('sysadmin');
+  });
+});
+
+describe('관리자 페이지 기능', () => {
+  test('로그인 하지 않고 유저 조회', async () => {
+    const response = await request(server).get('/api/admin/user').send();
+
+    expect(response.status).toBe(401);
+  });
+
+  test('로그인 후 유저 조회', async () => {
+    const loginResponse = await request(server)
+      .post('/api/admin/login')
+      .send({ username: 'sysadmin', password: 'sysadmin' });
+    const cookie = loginResponse.headers['set-cookie'];
+
+    const response = await request(server).get('/api/admin/user').set('Cookie', cookie).send();
+    expect(response.status).toBe(200);
+  });
+
+  test('유저 삭제 DELETE /api/admin/user', async () => {
+    const name = '테스팅';
+    const registerResponse = await request(server)
+      .post('/api/auth/register')
+      .send({ email: `${name}@test.com`, username: name, password: '123456' });
+
+    const loginResponse = await request(server)
+      .post('/api/admin/login')
+      .send({ username: 'sysadmin', password: 'sysadmin' });
+    const cookie = loginResponse.headers['set-cookie'];
+
+    const response = await request(server)
+      .delete('/api/admin/user')
+      .set('Cookie', cookie)
+      .send({ username: registerResponse.body.username });
+    expect(response.status).toBe(204);
+  });
+});
