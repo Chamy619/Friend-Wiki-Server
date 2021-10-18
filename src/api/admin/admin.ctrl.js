@@ -1,5 +1,6 @@
 import Joi from 'joi';
 import Admin from '../../models/admin';
+import User from '../../models/users';
 
 export const register = async (ctx) => {
   const schema = Joi.object().keys({
@@ -27,12 +28,6 @@ export const register = async (ctx) => {
     await admin.save();
 
     ctx.body = admin.serialize();
-
-    const token = admin.generateToken();
-    ctx.cookies.set('access_token', token, {
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-      httpOnly: true,
-    });
   } catch (e) {
     ctx.throw(500, e);
   }
@@ -65,6 +60,47 @@ export const login = async (ctx) => {
       maxAge: 1000 * 60 * 60 * 24 * 7,
       httpOnly: true,
     });
+  } catch (e) {
+    ctx.throw(500, e);
+  }
+};
+
+export const getUserList = async (ctx) => {
+  const user = await User.find({});
+
+  ctx.body = user;
+
+  return;
+};
+
+export const deleteUser = async (ctx) => {
+  const schema = Joi.object().keys({
+    username: Joi.string().required(),
+  });
+
+  const result = schema.validate(ctx.request.body);
+
+  if (result.error) {
+    ctx.status = 400;
+    ctx.body = result.error;
+    return;
+  }
+
+  const { username } = ctx.request.body;
+
+  try {
+    await User.deleteOne({ username }, (err) => {
+      if (err) {
+        ctx.status = 400;
+        ctx.body = err;
+
+        return;
+      }
+    });
+
+    ctx.status = 204;
+
+    return;
   } catch (e) {
     ctx.throw(500, e);
   }
