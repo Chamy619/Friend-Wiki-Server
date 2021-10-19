@@ -65,6 +65,16 @@ export const login = async (ctx) => {
   }
 };
 
+export const check = (ctx) => {
+  const { user } = ctx.state;
+  if (!user) {
+    ctx.status = 401;
+    return;
+  }
+
+  ctx.body = user;
+};
+
 export const getUserList = async (ctx) => {
   const user = await User.find({});
 

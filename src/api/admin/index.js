@@ -8,5 +8,6 @@ admin.post('/register', checkLoggedIn, adminCtrl.register);
 admin.post('/login', adminCtrl.login);
 admin.get('/user', checkLoggedIn, adminCtrl.getUserList);
 admin.delete('/user', checkLoggedIn, adminCtrl.deleteUser);
+admin.get('/check', adminCtrl.check);
 
 export default admin;
