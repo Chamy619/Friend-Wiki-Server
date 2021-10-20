@@ -33,3 +33,57 @@ export const write = async (ctx) => {
     ctx.throw(500, e);
   }
 };
+
+export const readOne = async (ctx) => {
+  const { id } = ctx.params;
+
+  try {
+    const one = await Genealogy.findById(id).exec();
+    if (!one) {
+      ctx.status = 404;
+      return;
+    }
+    ctx.body = one;
+  } catch (e) {
+    ctx.throw(500, e);
+  }
+};
+
+export const update = async (ctx) => {
+  const { id } = ctx.params;
+
+  const schema = Joi.object().keys({
+    name: Joi.string(),
+    date: Joi.string(),
+    description: Joi.string(),
+  });
+
+  const result = schema.validate(ctx.request.body);
+  if (result.error) {
+    ctx.status = 400;
+    ctx.body = result.error;
+    return;
+  }
+
+  const updateGenealogy = {
+    ...ctx.request.body,
+  };
+
+  try {
+    const target = await Genealogy.findByIdAndUpdate(id, updateGenealogy, { new: true }).exec();
+    ctx.body = target;
+  } catch (e) {
+    ctx.throw(500, e);
+  }
+};
+
+export const remove = async (ctx) => {
+  const { id } = ctx.params;
+  console.log('들어옴?');
+  try {
+    await Genealogy.findByIdAndRemove(id).exec();
+    ctx.status = 204;
+  } catch (e) {
+    ctx.throw(500, e);
+  }
+};
