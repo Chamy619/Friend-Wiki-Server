@@ -241,17 +241,31 @@ describe('관리자 페이지 기능', () => {
     expect(response.body.name).toBe('테스팅');
   });
 
-  test('나댐왕 추가 POST /api/admin/genealogy', async () => {
+  test('나댐왕 추가, 수정, 삭제', async () => {
+    /*
+      POST    /api/admin/genealogy
+      PATCH   /api/admin/genealogy/:id
+      DELETE  /api/admin/genealogy/:id
+    */
     const loginResponse = await request(server)
       .post('/api/admin/login')
       .send({ username: 'sysadmin', password: 'sysadmin' });
     const cookie = loginResponse.headers['set-cookie'];
 
-    const response = await request(server).post('/api/admin/genealogy').set('Cookie', cookie).send({
+    const createResponse = await request(server).post('/api/admin/genealogy').set('Cookie', cookie).send({
       name: '안영민',
       date: '2020',
       description: '설명~',
     });
-    expect(response.body.name).toBe('안영민');
+    expect(createResponse.body.name).toBe('안영민');
+
+    const id = createResponse.body._id;
+    const patchResponse = await request(server).patch(`/api/admin/genealogy/${id}`).set('Cookie', cookie).send({
+      name: '수정함',
+    });
+    expect(patchResponse.body.name).toBe('수정함');
+
+    const deleteResponse = await request(server).delete(`/api/admin/genealogy/${id}`).set('Cookie', cookie).send();
+    expect(deleteResponse.status).toBe(204);
   });
 });
