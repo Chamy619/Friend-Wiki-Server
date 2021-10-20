@@ -206,7 +206,7 @@ describe('관리자 페이지 기능', () => {
   });
 
   test('로그인 하지 않고 나댐왕 조회 GET /api/admin/genealogy', async () => {
-    const response = await request(server).get('api/admin/genealogy').send();
+    const response = await request(server).get('/api/admin/genealogy').send();
     expect(response.status).toBe(401);
   });
 
@@ -216,7 +216,7 @@ describe('관리자 페이지 기능', () => {
       .send({ username: 'sysadmin', password: 'sysadmin' });
     const cookie = loginResponse.headers['set-cookie'];
 
-    const response = await request(server).get('api/admin/genealogy').set('Cookie', cookie).send();
+    const response = await request(server).get('/api/admin/genealogy').set('Cookie', cookie).send();
     expect(response.status).toBe(200);
     expect(response.body[0].name).toBe('안영민');
   });
@@ -227,7 +227,7 @@ describe('관리자 페이지 기능', () => {
       .send({ username: 'sysadmin', password: 'sysadmin' });
     const cookie = loginResponse.headers['set-cookie'];
 
-    const response = await request(server).post('api/admin/genealogy').set('Cookie', cookie).send({
+    const response = await request(server).post('/api/admin/genealogy').set('Cookie', cookie).send({
       name: '안영민',
       date: '2020',
       description: '설명~',
