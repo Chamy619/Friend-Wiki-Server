@@ -204,4 +204,68 @@ describe('관리자 페이지 기능', () => {
       .send({ username: registerResponse.body.username });
     expect(response.status).toBe(204);
   });
+
+  test('로그인 하지 않고 나댐왕 조회 GET /api/admin/genealogy', async () => {
+    const response = await request(server).get('/api/admin/genealogy').send();
+    expect(response.status).toBe(401);
+  });
+
+  test('나댐왕 조회', async () => {
+    const loginResponse = await request(server)
+      .post('/api/admin/login')
+      .send({ username: 'sysadmin', password: 'sysadmin' });
+    const cookie = loginResponse.headers['set-cookie'];
+
+    const response = await request(server).get('/api/admin/genealogy').set('Cookie', cookie).send();
+    expect(response.status).toBe(200);
+    expect(response.body[0].name).toBe('안영민');
+  });
+
+  test('특정 나댐왕 조회', async () => {
+    /*
+      {
+        name: 테스팅,
+        date: 1995,
+        description: 테스팅용 데이터
+      }
+    */
+    const loginResponse = await request(server)
+      .post('/api/admin/login')
+      .send({ username: 'sysadmin', password: 'sysadmin' });
+    const cookie = loginResponse.headers['set-cookie'];
+
+    const response = await request(server)
+      .get('/api/admin/genealogy/616fae6908a1d518055d6ab2')
+      .set('Cookie', cookie)
+      .send();
+    expect(response.body.name).toBe('테스팅');
+  });
+
+  test('나댐왕 추가, 수정, 삭제', async () => {
+    /*
+      POST    /api/admin/genealogy
+      PATCH   /api/admin/genealogy/:id
+      DELETE  /api/admin/genealogy/:id
+    */
+    const loginResponse = await request(server)
+      .post('/api/admin/login')
+      .send({ username: 'sysadmin', password: 'sysadmin' });
+    const cookie = loginResponse.headers['set-cookie'];
+
+    const createResponse = await request(server).post('/api/admin/genealogy').set('Cookie', cookie).send({
+      name: '안영민',
+      date: '2020',
+      description: '설명~',
+    });
+    expect(createResponse.body.name).toBe('안영민');
+
+    const id = createResponse.body._id;
+    const patchResponse = await request(server).patch(`/api/admin/genealogy/${id}`).set('Cookie', cookie).send({
+      name: '수정함',
+    });
+    expect(patchResponse.body.name).toBe('수정함');
+
+    const deleteResponse = await request(server).delete(`/api/admin/genealogy/${id}`).set('Cookie', cookie).send();
+    expect(deleteResponse.status).toBe(204);
+  });
 });
