@@ -204,4 +204,34 @@ describe('관리자 페이지 기능', () => {
       .send({ username: registerResponse.body.username });
     expect(response.status).toBe(204);
   });
+
+  test('로그인 하지 않고 나댐왕 조회 GET /api/admin/genealogy', async () => {
+    const response = await request(server).get('api/admin/genealogy').send();
+    expect(response.status).toBe(401);
+  });
+
+  test('나댐왕 조회', async () => {
+    const loginResponse = await request(server)
+      .post('/api/admin/login')
+      .send({ username: 'sysadmin', password: 'sysadmin' });
+    const cookie = loginResponse.headers['set-cookie'];
+
+    const response = await request(server).get('api/admin/genealogy').set('Cookie', cookie).send();
+    expect(response.status).toBe(200);
+    expect(response.body[0].name).toBe('안영민');
+  });
+
+  test('나댐왕 추가 POST /api/admin/genealogy', async () => {
+    const loginResponse = await request(server)
+      .post('/api/admin/login')
+      .send({ username: 'sysadmin', password: 'sysadmin' });
+    const cookie = loginResponse.headers['set-cookie'];
+
+    const response = await request(server).post('api/admin/genealogy').set('Cookie', cookie).send({
+      name: '안영민',
+      date: '2020',
+      description: '설명~',
+    });
+    expect(response.body.name).toBe('안영민');
+  });
 });
