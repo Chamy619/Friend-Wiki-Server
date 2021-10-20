@@ -221,6 +221,26 @@ describe('관리자 페이지 기능', () => {
     expect(response.body[0].name).toBe('안영민');
   });
 
+  test('특정 나댐왕 조회', async () => {
+    /*
+      {
+        name: 테스팅,
+        date: 1995,
+        description: 테스팅용 데이터
+      }
+    */
+    const loginResponse = await request(server)
+      .post('/api/admin/login')
+      .send({ username: 'sysadmin', password: 'sysadmin' });
+    const cookie = loginResponse.headers['set-cookie'];
+
+    const response = await request(server)
+      .get('/api/admin/genealogy/616fae6908a1d518055d6ab2')
+      .set('Cookie', cookie)
+      .send();
+    expect(response.body.name).toBe('테스팅');
+  });
+
   test('나댐왕 추가 POST /api/admin/genealogy', async () => {
     const loginResponse = await request(server)
       .post('/api/admin/login')
