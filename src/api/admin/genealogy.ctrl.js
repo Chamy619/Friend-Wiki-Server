@@ -11,8 +11,8 @@ export const getGenealogy = async (ctx) => {
 
 export const write = async (ctx) => {
   const schema = Joi.object().keys({
-    name: Joi.string(),
-    date: Joi.string(),
+    name: Joi.string().allow(''),
+    date: Joi.string().required(),
     description: Joi.string(),
   });
 
