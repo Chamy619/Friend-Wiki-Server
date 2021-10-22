@@ -79,7 +79,6 @@ export const update = async (ctx) => {
 
 export const remove = async (ctx) => {
   const { id } = ctx.params;
-  console.log('들어옴?');
   try {
     await Genealogy.findByIdAndRemove(id).exec();
     ctx.status = 204;
