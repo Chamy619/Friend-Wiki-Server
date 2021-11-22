@@ -7,5 +7,6 @@ auth.post('/register', authCtrl.register);
 auth.post('/login', authCtrl.login);
 auth.get('/check', authCtrl.check);
 auth.post('/logout', authCtrl.logout);
+auth.post('/oauth', authCtrl.oauth);
 
 export default auth;
