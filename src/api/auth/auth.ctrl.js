@@ -61,9 +61,9 @@ export const login = async (ctx) => {
   try {
     let user;
     if (email && password) {
-      user = await loginForEmailAndPassword(email, password);
+      user = await getUserForEmailAndPassword(email, password);
     } else {
-      user = await loginForOauth(code);
+      user = await getUserForOauth(code);
     }
     ctx.body = user.serialize();
 
@@ -78,7 +78,7 @@ export const login = async (ctx) => {
   }
 };
 
-const loginForEmailAndPassword = async (email, password) => {
+const getUserForEmailAndPassword = async (email, password) => {
   const user = await User.findByEmail(email);
   if (!user) {
     throw new Error('Not registered email');
@@ -92,7 +92,7 @@ const loginForEmailAndPassword = async (email, password) => {
   return user;
 };
 
-const loginForOauth = async (code) => {
+const getUserForOauth = async (code) => {
   try {
     const accessToken = await getKakaoAccessToken(code, process.env.KAKAO_LOGIN_REDIRECT_URI);
     const userId = await getKakaoUserId(accessToken);
@@ -176,7 +176,7 @@ export const oauth = async (ctx) => {
     const accessToken = await getKakaoAccessToken(code, process.env.KAKAO_AUTHENTICATION_REDIRECT_URI);
     const userId = await getKakaoUserId(accessToken);
 
-    if (await User.findByKakaoId(userId)) {
+    if (await isExistKakaoId(userId)) {
       ctx.status = 409;
       return;
     }
@@ -189,4 +189,14 @@ export const oauth = async (ctx) => {
     ctx.status = 401;
     return;
   }
+};
+
+const isExistKakaoId = async (kakaoId) => {
+  const user = await User.findByKakaoId(kakaoId);
+
+  if (user) {
+    return true;
+  }
+
+  return false;
 };
