@@ -31,6 +31,7 @@ UserSchema.methods.generateToken = function () {
       _id: this.id,
       email: this.email,
       username: this.username,
+      kakaoId: this.kakaoId,
     },
     process.env.JWT_SECRET,
     {

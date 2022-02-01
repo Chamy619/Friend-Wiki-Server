@@ -19,6 +19,10 @@ const jwtMiddleware = async (ctx, next) => {
       ctx.state.user.email = decoded.email;
     }
 
+    if (decoded.kakaoId) {
+      ctx.state.user.kakaoId = decoded.kakaoId;
+    }
+
     const now = Math.floor(Date.now() / 1000);
 
     // 토큰의 유효기간이 3.5일 미만일 경우 새로운 토큰 발행
