@@ -184,6 +184,13 @@ export const oauth = async (ctx) => {
     await User.findByIdAndUpdate(user._id, { kakaoId: userId });
     const updateUserData = await User.findById(user._id);
     ctx.body = updateUserData.serialize();
+
+    const token = updateUserData.generateToken();
+    ctx.cookies.set('access_token', token, {
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+      httpOnly: true,
+    });
+
     return;
   } catch {
     ctx.status = 401;
