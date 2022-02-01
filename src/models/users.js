@@ -6,6 +6,7 @@ const UserSchema = new Schema({
   email: String,
   username: String,
   hashedPassword: String,
+  kakaoId: Number,
 });
 
 UserSchema.methods.setPassword = async function (password) {
@@ -45,6 +46,10 @@ UserSchema.statics.findByEmail = function (email) {
 
 UserSchema.statics.findByUsername = function (username) {
   return this.findOne({ username });
+};
+
+UserSchema.statics.findByKakaoId = function (kakaoId) {
+  return this.findOne({ kakaoId });
 };
 
 const User = mongoose.model('User', UserSchema);
